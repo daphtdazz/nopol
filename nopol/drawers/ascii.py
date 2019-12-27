@@ -144,28 +144,19 @@ class ASCIIDrawer(Drawer):
         self.line_drawer.perform_op(
             OPS.swap_correlator, on_corr, first_forward_edge
         )
-        if len(node.forward_edges) == 1:
-            # one forward edge, print the subtree
-            self.update_line_drawer_from_node(
-                first_forward_edge.forward_node, first_forward_edge
-            )
-            # self.line_drawer.perform_op(
-            #     OPS.print_node, first_forward_edge, first_forward_edge.forward_node
-            # )
-            # RECURSE
-            return
 
-        # self.line_drawer.swap_correlator(node, first_forward_edge)
-        curr_edge = first_forward_edge
-        for next_edge in node.forward_edges[1:]:
+        # For the 0..N-2 edges split the next one off first then print the subtree
+        # on the edge's forward node
+        for (edge_ind, curr_edge) in enumerate(node.forward_edges[:-1]):
+            next_edge = node.forward_edges[edge_ind + 1]
             self.line_drawer.perform_op(
                 OPS.split_line, curr_edge, next_edge
             )
             self.update_line_drawer_from_node(curr_edge.forward_node, curr_edge)
-            curr_edge = next_edge
 
-        assert curr_edge is next_edge
-        self.update_line_drawer_from_node(next_edge.forward_node, next_edge)
+        # And print the subtree for the last (N-1th) edge
+        last_edge = node.forward_edges[-1]
+        self.update_line_drawer_from_node(last_edge.forward_node, last_edge)
 
     def draw(self):
         return self.line_drawer.draw()
