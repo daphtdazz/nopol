@@ -1,12 +1,14 @@
 from enum import Enum
 
+from .utils import ParamReprMixin
 
-class Edge:
+
+class Edge(ParamReprMixin):
     DIRECTIONS = Enum('DIRECTIONS', ('forward', 'backward'))
 
     def __init__(self, backward_node, forward_node, direction=None):
-        self.forward_node = forward_node
         self.backward_node = backward_node
+        self.forward_node = forward_node
         self.direction = None
 
     def __eq__(self, other):
@@ -23,5 +25,8 @@ class Edge:
             other.backward_node
         )
 
-    def __repr__(self):
-        return f'{type(self).__name__}({self.backward_node}, {self.forward_node})'
+    def __hash__(self):
+        return id(self)
+
+    def __str__(self):
+        return f'{self.backward_node.name}--{self.forward_node.name}'

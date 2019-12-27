@@ -1,8 +1,12 @@
 from .descriptors import Singular
 from .edge import Edge
+from .utils import ParamReprMixin
 
 
-class Node:
+class Node(ParamReprMixin):
+    omitted_repr_params = set([
+        'forward_edges', 'undirected_edges', 'backward_edges', 'info'
+    ])
 
     counter = 1
 
@@ -33,5 +37,5 @@ class Node:
 
     add_backward_node = Singular(add_backward_nodes)
 
-    def __str__(self):
-        return f'{type(self).__name__}(name={self.name!r})'
+    def description(self):
+        return self.name
