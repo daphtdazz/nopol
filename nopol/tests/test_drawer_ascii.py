@@ -56,6 +56,17 @@ def test_ascii_drawer_single_node():
 | \
 |  * Node 3
 * Node 6""", id='various-splits-only'),
+    prm([
+        ('Node 1', 'Node 2'),
+        ('Node 1', 'Node 3'),
+        ('Node 2', 'Node 3'),
+    ], r"""* Node 1
+|\
+| \
+|  * Node 2
+| /
+|/
+* Node 3""", id='simplest-merge'),
 ])
 def test_ascii_drawer(edges, result):
 
