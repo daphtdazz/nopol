@@ -4,6 +4,7 @@ from nopol.node import Node
 
 def test_ascii_line_drawer():
     drwr = ASCIILineDrawer()
+    assert drwr.draw() == ''
 
     n1 = Node()
 

@@ -172,6 +172,8 @@ class ASCIILineDrawer:
     # Internal
     # ----------------------------------------------------------------------------------------------
     def _draw_to_canvas(self):
+        if len(self.hlines) == 0:
+            return
         max_vlines = max(len(hl.vlines) for hl in self.hlines)
 
         # reset the canvas
