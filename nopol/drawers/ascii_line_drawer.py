@@ -29,6 +29,10 @@ class HLine:
         self.vlines.append(vline)
         return vline
 
+    def remove_vline(self, vline):
+        vl_ind = self.vlines.index(vline)
+        del self.vlines[vl_ind]
+
     def add_departing_vline(self, from_vline, vline=None):
         vline = self._curr_or_new_vline(vline)
         vline.start_h_v_lines = (self, from_vline)
@@ -80,7 +84,7 @@ class HLine:
             if ehl is self:
                 return self.vlines.index(evl)
 
-        raise InvalidDrawing(f'{vline} does not commence, terminate or passthrough {self}')
+        raise IndexError(f'{vline} not in {self}')
 
     # ----------------------------------------------------------------------------------------------
     # Internal
@@ -142,12 +146,16 @@ class ASCIILineDrawer:
         self._draw_to_canvas()
         return ''.join(''.join(list_rstrip(line, lambda c: c == ' ')) + '\n' for line in self.canvas)
 
-    def add_hline(self):
+    def add_hline(self, node=None, vline=None):
         if len(self.hlines) == 0:
             hl = HLine()
         else:
             hl = self.hlines[-1].propagate()
         self.hlines.append(hl)
+        if node is not None:
+            if vline is None:
+                raise ValueError('Cannot add an hline with a node but not specify its vline')
+            hl.put_node(vline, node)
         return hl
 
     # ----------------------------------------------------------------------------------------------
@@ -212,7 +220,11 @@ class ASCIILineDrawer:
             ]
             for ind, vl in itr
         ):
-            ind_below = hline_below.index_of_vline(vl)
+            try:
+                ind_below = hline_below.index_of_vline(vl)
+            except IndexError:
+                # this line terminated above.
+                continue
             if ind_below == vl_start_ind:
                 self._draw_chars([
                     (hline_draw_ind + 1, vl_start_ind * 3, '|'),

@@ -2,7 +2,7 @@ from nopol.drawers.ascii import ASCIILineDrawer
 from nopol.node import Node
 
 
-def test_ascii_line_drawer_v3():
+def test_ascii_line_drawer():
     drwr = ASCIILineDrawer()
 
     n1 = Node()
@@ -23,8 +23,8 @@ def test_ascii_line_drawer_v3():
 """
 
     v2 = h2.add_departing_vline(v1)
-    h3 = drwr.add_hline()
     n3 = Node()
+    h3 = drwr.add_hline(node=n3, vline=v2)
     h3.put_node(v2, n3)
 
     v3 = h3.add_departing_vline(v2)
@@ -69,4 +69,22 @@ def test_ascii_line_drawer_v3():
 | /
 |/
 * Node 8
+"""
+
+
+def test_ascii_line_drawer_invisible_lines():
+    drwr = ASCIILineDrawer()
+
+    h1 = drwr.add_hline()
+    vh1 = h1.add_vline()
+    h1.put_node(vh1, Node())
+    v2 = h1.add_departing_vline(vh1)
+    h2 = drwr.add_hline()
+    h2.remove_vline(vh1)
+    vh2 = h2.add_vline()
+    h2.add_arriving_vline(vh2, v2)
+    h2.put_node(vh2, Node())
+
+    assert drwr.draw() == r"""* Node 1
+* Node 2
 """
