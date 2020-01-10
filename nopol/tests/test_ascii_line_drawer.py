@@ -89,3 +89,30 @@ def test_ascii_line_drawer_invisible_lines():
     assert drwr.draw() == r"""* Node 1
 * Node 2
 """
+
+
+def test_asii_line_drawer_insert_vline():
+    drwr = ASCIILineDrawer()
+
+    h1 = drwr.add_hline()
+    vh1 = h1.add_vline()
+    h1.put_node(vh1, Node())
+
+    v2 = h1.add_departing_vline(vh1)
+
+    h2 = drwr.add_hline()
+    h2.put_node(v2, Node())
+
+    h3 = drwr.add_hline()
+
+    # without inserting before, vh3 would go at the end and we'd get a cross
+    vh3 = h3.add_vline(insert_before_vline=vh1)
+    h3.add_arriving_vline(vh3, vh1)
+    h3.put_node(vh3, Node())
+
+    assert drwr.draw() == r"""* Node 1
+|\
+| \
+|  * Node 2
+*  | Node 3
+"""

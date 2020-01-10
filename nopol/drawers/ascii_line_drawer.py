@@ -24,13 +24,21 @@ class HLine:
         self.node = None
         self.node_vline = None
 
-    def add_vline(self, vline=None):
+    def add_vline(self, vline=None, insert_before_vline=None):
         vline = self._curr_or_new_vline(vline)
-        self.vlines.append(vline)
+
+        if insert_before_vline is None:
+            self.vlines.append(vline)
+        else:
+            vl_ind = self.vlines.index(insert_before_vline)
+            self.vlines[vl_ind:vl_ind] = [vline]
         return vline
 
     def remove_vline(self, vline):
-        vl_ind = self.vlines.index(vline)
+        try:
+            vl_ind = self.vlines.index(vline)
+        except ValueError:
+            return
         del self.vlines[vl_ind]
 
     def add_departing_vline(self, from_vline, vline=None):
